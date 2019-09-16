@@ -1,0 +1,8 @@
+
+reports/
+venv/
+src/__pycache__/
+
+.idea/
+
+src/plenumconfig.py
