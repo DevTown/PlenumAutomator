@@ -39,7 +39,10 @@ def next_weekday(d, weekday):
 
 def get_next_Plenum():
     today = datetime.date.today()
-    first = today.replace(day=1, month=today.month + 1)
+    month = today.month + 1
+    if month > 12 :
+        month = 1
+    first = today.replace(day=1, month=month)
     return next_weekday(first, 2)
 
 
