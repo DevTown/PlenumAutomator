@@ -12,10 +12,17 @@ def addToWiki(name, text):
     site.login(cfg.wikiuser, cfg.wikipassword)
     page = site.pages[name]
     patternstart = r'<(a).*?>'
-    result = re.sub(patternstart, "[[", text)
+    result = re.sub(patternstart, "[", text)
 
     patternend = r'<(/a).*?>'
-    result = re.sub(patternend, "]]", result)
+    result = re.sub(patternend, "]", result)
+
+    search_results = re.finditer(r'\[.*?\]', result)
+    for item in search_results:
+        rep = str(item.group(0)).lstrip('[').rstrip(']').replace("&#x2F;", "/")
+        result = result.replace(str(item.group(0)), "[" + rep + " " + rep + "]")
+
+    result.replace("<!DOCTYPE HTML><html><body>", "").replace("</body></html>", "") + "[[Kategorie:" + cfg.wikiKategorie + "]]"
     page.save(text=result, summary="Neuanlage")
 
 
@@ -58,9 +65,9 @@ def main():
     filename = cfg.filePrefix + '_' + str(get_last_Plenum().strftime("%Y.%m.%d")).replace('.', '_')
     write_Plenum(filename, plenum)
 
-    plenumwiki = str(plenum["html"]).replace("<!DOCTYPE HTML><html><body>", "").replace("</body></html>", "") + "[[Kategorie:" + cfg.wikiKategorie + "]]"
+    # plenumwiki = str(plenum["html"]).replace("<!DOCTYPE HTML><html><body>", "").replace("</body></html>", "") + "[[Kategorie:" + cfg.wikiKategorie + "]]"
     wikiname = cfg.wikiwikiprefix + '_' + str(get_last_Plenum().strftime("%Y_%m"))
-    addToWiki(wikiname, plenumwiki)
+    addToWiki(wikiname, str(plenum["html"]))
 
     c.setText(padID=cfg.mypadID, text='Plenum ' + str(get_next_Plenum().strftime("%Y.%m.%d")))
 
