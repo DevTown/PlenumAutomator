@@ -23,6 +23,7 @@ def addToWiki(name, text):
         result = result.replace(str(item.group(0)), "[" + rep + " " + rep + "]")
 
     result.replace("<!DOCTYPE HTML><html><body>", "").replace("</body></html>", "") + "[[Kategorie:" + cfg.wikiKategorie + "]]"
+    write_Plenum(name, result)
     page.save(text=result, summary="Neuanlage")
 
 
@@ -30,11 +31,13 @@ def makePDF(html, pdf):
     pdfkit.from_url(cfg.saveSpace + html, cfg.saveSpace + pdf)
 
 
-def write_Plenum(name, html):
+def write_Plenum(name, html, pdf=1):
     with open(cfg.saveSpace + name + '.html', 'w') as f:
         f.write(html["html"])
     f.close()
-    makePDF(name + ".html", name + ".pdf")
+
+    if pdf == 1:
+        makePDF(name + ".html", name + ".pdf")
 
 
 def next_weekday(d, weekday):
